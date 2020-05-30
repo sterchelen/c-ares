@@ -107,6 +107,11 @@ int ares_init(ares_channel *channelptr)
   return ares_init_options(channelptr, NULL, 0);
 }
 
+int ares_reinit(ares_channel channel)
+{
+  return 1;
+}
+
 int ares_init_options(ares_channel *channelptr, struct ares_options *options,
                       int optmask)
 {
@@ -1683,6 +1688,21 @@ static int init_by_resolv_conf(ares_channel channel)
 
     fp = fopen(resolvconf_path, "r");
     if (fp) {
+
+      //TODO: register file's stat for
+      //further usage on reinit to use new
+      //nameserver
+      struct stat st;
+      if (stat(resolvconf_path, &st) == 0)
+      {
+#ifdef __APPLE__
+      channel->resolvconf_mtime = st.st_mtimespec;
+#else
+      channel->resolvconf_mtime = st.st_mtim;
+#endif
+      }
+
+
       while ((status = ares__read_line(fp, &line, &linesize)) == ARES_SUCCESS)
       {
         if ((p = try_config(line, "domain", ';')) && update_domains)

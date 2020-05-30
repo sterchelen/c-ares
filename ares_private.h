@@ -37,6 +37,10 @@
 #define HAVE_WRITEV 1
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+
 #define DEFAULT_TIMEOUT         5000 /* milliseconds */
 #define DEFAULT_TRIES           4
 #ifndef INADDR_NONE
@@ -333,6 +337,7 @@ struct ares_channeldata {
 
   /* Path for resolv.conf file, configurable via ares_options */
   char *resolvconf_path;
+  struct timespec resolvconf_mtime;
 };
 
 /* Does the domain end in ".onion" or ".onion."? Case-insensitive. */

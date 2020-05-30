@@ -77,11 +77,18 @@ static int get_address_index(const struct in_addr *addr,
                              const struct apattern *sortlist, int nsort);
 static int get6_address_index(const struct ares_in6_addr *addr,
                               const struct apattern *sortlist, int nsort);
+static int is_ares_reinit_necessary(ares_channel channel);
 
 void ares_gethostbyname(ares_channel channel, const char *name, int family,
                         ares_host_callback callback, void *arg)
 {
   struct host_query *hquery;
+
+  /* We must ensure that nameserver are up to date*/
+  if (is_ares_reinit_necessary(channel))
+  {
+    ares_reinit(channel);
+  }
 
   /* Right now we only know how to look up Internet addresses - and unspec
      means try both basically. */
@@ -344,6 +351,11 @@ int ares_gethostbyname_file(ares_channel channel, const char *name,
       *host = NULL;
     }
   return result;
+}
+
+static int is_ares_reinit_necessary(ares_channel channel)
+{
+  return 1;
 }
 
 static int file_lookup(const char *name, int family, struct hostent **host)

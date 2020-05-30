@@ -343,6 +343,8 @@ CARES_EXTERN int ares_init_options(ares_channel *channelptr,
                                    struct ares_options *options,
                                    int optmask);
 
+CARES_EXTERN int ares_reinit(ares_channel channel);
+
 CARES_EXTERN int ares_save_options(ares_channel channel,
                                    struct ares_options *options,
                                    int *optmask);
